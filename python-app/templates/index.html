@@ -1,0 +1,53 @@
+<!-- ./python-app/templates/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mi banca online</h1>
+        <div class="form-container">
+            <!-- Formulario de Acceso -->
+            <div class="form-box">
+                <h2>Acceder</h2>
+
+                {% if login_error %}
+                    <p style="color: red;">{{ login_error }}</p>
+                {% endif %}
+
+                <form action="/login" method="POST">
+                    <label for="username">Nombre del usuario</label>
+                    <input type="text" id="username" name="username" required>
+                    
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit" class="button">Acceder</button>
+                </form>
+            </div>
+
+            <!-- Formulario de Registro -->
+            <div class="form-box">
+                <h2>Registrarse</h2>
+
+                {% if register_error %}
+                    <p style="color: red;">{{ register_error }}</p>
+                {% endif %}
+
+                <form action="/register" method="POST">
+                    <label for="register-username">Nombre del usuario</label>
+                    <input type="text" id="register-username" name="register-username" required>
+
+                    <label for="register-password">Contraseña</label>
+                    <input type="password" id="register-password" name="register-password" required>
+                    <button type="submit" class="button">Registrarse</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

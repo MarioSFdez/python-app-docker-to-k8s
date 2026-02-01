@@ -1,0 +1,9 @@
+# ./python-app/requirements.txt
+bcrypt
+psycopg
+fastapi
+psycopg[pool]
+Jinja2
+gunicorn
+uvicorn
+python-multipart

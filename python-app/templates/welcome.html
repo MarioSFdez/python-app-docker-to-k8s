@@ -1,0 +1,51 @@
+<!-- ./python-app/templates/welcome.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido - Mi Banca Online</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/welcome.css') }}">
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-header">
+            <h1>{{ message }}, {{ username }}!</h1>
+            <span class="user-badge">👤 {{ username }}</span>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-icon">💰</div>
+                <h3>Mis Cuentas</h3>
+                <p>Consulta tus saldos y movimientos</p>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-icon">💳</div>
+                <h3>Transferencias</h3>
+                <p>Realiza transferencias de forma segura</p>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-icon">📊</div>
+                <h3>Resumen</h3>
+                <p>Análisis de tus finanzas</p>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <p><strong>Información del sistema</strong></p>
+            <!-- {% if pod_name %}
+            <div class="pod-info">
+                🚀 Pod: <strong>{{ pod_name }}</strong>
+            </div>
+            {% endif %} -->
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/" class="logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+</body>
+</html>
