@@ -50,11 +50,12 @@ docker-compose up -d
 #### Ejecutar aplicación python local
 ```
 # Crear entorno virtual
+cd python-app
 python3 -m venv .myvenv
 source .myvenv/bin/activate
 
 # Instalar dependencias
-pip install -r python-app/requirements.txt
+pip install -r requirements.txt
 
 # Configurar variables de entorno
 export POSTGRES_USER='<your-username>'
