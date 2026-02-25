@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    env_file: 
+      - ../env/.env.docker
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - postgresql-local:/var/lib/postgresql/data
+      - ../init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  banca-online:
+    image: banca-online:local
+    build:
+      context: ..
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy    
+    ports:
+      - 8000:8000
+    env_file: 
+      - ../env/.env.docker
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
+
+volumes:
+  postgresql-local:
+
+

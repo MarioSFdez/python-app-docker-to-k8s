@@ -6,7 +6,7 @@ La aplicación simula **una banca online** desarrollada con **FastAPI y PostgreS
 
 Incluye de forma progresiva:
 - 🧪 **Ejecución local** con entorno virtual y variables de entorno ✅
-- 🐳 **Containerización con Docker** y buenas prácticas de empaquetado 🚧
+- 🐳 **Containerización con Docker** y buenas prácticas de empaquetado ✅
 - ☸️ **Orquestación en Kubernetes** (Deployments, Services y health checks) 🚧
 - 📦 **Helm Charts**, con despliegues reutilizables y configurables 🚧
 - 🔄 **GitOps con ArgoCD** para despliegues declarativos 🚧
@@ -35,7 +35,7 @@ cd python-app-docker-to-k8s
 ### Requisitos
 - Python 3.11+
 - PostgreSQL
-- Docker (opcional)
+- Docker
 
 ### Instalación
 #### Instalar PostgreSQL
@@ -49,18 +49,15 @@ CREATE USER <your-username> WITH PASSWORD '<your-password>';
 CREATE DATABASE <your-database> OWNER <your-username>;
 GRANT ALL PRIVILEGES ON DATABASE <your-database> TO <your-username>;
 
+# Accede con el usuario creado
+psql -U <your-username> -d <your-database> -h localhost
+
 # Crear tabla users
- CREATE TABLE users (
-      id INT GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
-      username VARCHAR(25) NOT NULL UNIQUE,
-      password_hashed VARCHAR(255) NOT NULL
- );
-```
-#### Desplegar PostgreSQL con Docker (Recomendado)
-```
-# Levantar el contenedor
-cd python-app/docker-postgresql
-docker-compose up -d
+CREATE TABLE users (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username VARCHAR(25) NOT NULL UNIQUE,
+    password_hashed VARCHAR(255) NOT NULL
+);
 ```
 #### Ejecutar la Aplicación Python en Local
 ```
@@ -83,12 +80,75 @@ export POSTGRES_PORT=5432
 gunicorn app:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 ## 🐳 Despliegue con Docker
-<div align="center">
+### Requisitos
+- Docker y Docker Compose
+- Cuenta en Docker Hub (solo para modo producción con imagen remota)
+### Configuración inicial
+Modifica el `archivo env/.env.docker` con las siguientes variables:
+```
+POSTGRES_USER='<your-username>'
+POSTGRES_PASSWORD='<your-password>'
+POSTGRES_DB='<your-database>'
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+```
+---
+### Opción 1: Desarrollo Local (Build en local)
+Construye la imagen directamente en tu máquina y despliega con Docker Compose:
+#### docker-compose.local.yml
+```
+  banca-online:
+    image: banca-online:local
+    build:
+      context: ..
+```
+#### Despliegue de los servicios
+```
+cd compose
 
-### 🚧 PRÓXIMAMENTE 🚧  
-👷‍♂️ En construcción — vuelve pronto
+# Construir y levantar servicios
+docker-compose --env-file ../env/.env.docker -f docker-compose.local.yml up --build -d
+```
+**Accede a la aplicación:** http://localhost:8000
+### Opción 2: Producción (Imagen desde Docker Hub)
+Usa una imagen ya construida y publicada en Docker Hub.
+#### 1. Build y Push a Docker Hub
+```
+# Login en Docker Hub
+docker login
 
-</div>
+# Construir imagen con tag
+docker build -t <user-docker-hub>/banca-online:1.0.0 .
+
+# Subir al registro
+docker push <user-docker-hub>/banca-online:1.0.0
+```
+#### 2. Configurar docker-compose.prod.yml
+Modifica el archivo `compose/docker-compose.prod.yml`:
+```
+  banca-online:
+    image: <user-docker-hub>/banca-online:1.0.0   
+```
+**Usar mi imagen pública (opcional):**
+```
+    image: mariosfdez/banca-online:1.0.0
+```
+#### 3. Desplegar
+```
+cd compose
+
+# Descargar imagen y levantar servicios
+docker-compose --env-file ../env/.env.docker -f docker-compose.prod.yml up -d
+```
+---
+### Verificación
+```
+# Healthcheck de la aplicación
+curl http://localhost:8000/health
+
+# Respuesta esperada:
+# {"status":"healthy","database":"connected"}
+```
 
 ## ☸️ Despliegue en Kubernetes
 <div align="center">
